@@ -55,6 +55,27 @@ async function run(): Promise<void> {
         const scenInfo = await loggedInApi.scenInfo(site.site_id);
         topic = `${config.mqttTopic}/site/${site.site_name}/scenInfo`;
         await publisher.publish(topic, scenInfo.data);
+
+        if (scenInfo.data.grid_info != null) {
+          for (const g in scenInfo.data.grid_info.grid_list) {
+            const deviceSn = scenInfo.data.grid_info.grid_list[g].device_sn;
+            logger.log(`Found device ${deviceSn}`);
+
+            // get energyAnalysis for home usage
+            const homeUsage = await loggedInApi.energyAnalysis(
+              { siteId: site.site_id, deviceSn: deviceSn, type: 'day', deviceType: 'home_usage' }
+            );
+            topic = `${config.mqttTopic}/site/${site.site_name}/homeUsage`;
+ 	    await publisher.publish(topic, homeUsage.data);
+
+            // get energyAnalysis for solar production
+            const solarProd = await loggedInApi.energyAnalysis(
+              { siteId: site.site_id, deviceSn: deviceSn, type: 'day', deviceType: 'solar_production' }
+            );
+            topic = `${config.mqttTopic}/site/${site.site_name}/solarProduction`;
+            await publisher.publish(topic, solarProd.data);
+          }
+        }
       }
       logger.log("Published.");
     } else {

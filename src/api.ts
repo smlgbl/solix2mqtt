@@ -187,6 +187,17 @@ export interface Solarbank {
   output_power: `${number}`
 }
 
+export interface Device {
+  device_pn: string,
+  device_sn: string,
+  device_name: string,
+  device_img: string,
+  create_time: `${number}`,
+  status: `${number}`,
+  bind_site_status: string,
+  wireless_type: `${number}`
+}
+
 export interface ScenInfo {
   home_info: {
     home_name: string,
@@ -221,6 +232,9 @@ export interface ScenInfo {
   },
   retain_load: string,
   updated_time: string,
+  grid_info: {
+    grid_list: Device[]
+  }
   power_site_type: number,
 }
 
@@ -402,9 +416,9 @@ export class SolixApi {
       energyAnalysis:async ({
         siteId,
         deviceSn,
-        type,
+        type = "day",
         startTime = new Date(),
-        endTime,
+        endTime = new Date(),
         deviceType = "solar_production",
       }: {
         siteId: string, 
@@ -412,10 +426,10 @@ export class SolixApi {
         type: "day" | "week" | "year", 
         startTime?: Date, 
         endTime?: Date,
-        deviceType?: "solar_production"
+        deviceType?: 'solar_production' | 'solar_production_pv[1-4]' | 'solarbank' | 'home_usage' | 'grid',
       }) => {
-        const startTimeString = `${startTime.getUTCFullYear()}-${this.pad(startTime.getUTCMonth())}-${this.pad(startTime.getUTCDate())}`;
-        const endTimeString = endTime != null ? `${endTime.getUTCFullYear()}-${endTime.getUTCMonth()}-${endTime.getUTCDate()}` : "";
+        const startTimeString = `${startTime.getFullYear()}-${this.pad(startTime.getMonth() + 1)}-${this.pad(startTime.getDate())}`;
+        const endTimeString = endTime != null ? `${endTime.getFullYear()}-${this.pad(endTime.getMonth() + 1)}-${this.pad(endTime.getDate())}` : "";
         const data = {
           site_id: siteId,
           device_sn:deviceSn,
