@@ -63,17 +63,24 @@ async function run(): Promise<void> {
 
             // get energyAnalysis for home usage
             const homeUsage = await loggedInApi.energyAnalysis(
-              { siteId: site.site_id, deviceSn: deviceSn, type: 'day', deviceType: 'home_usage' }
+              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "home_usage" },
             );
             topic = `${config.mqttTopic}/site/${site.site_name}/homeUsage`;
- 	    await publisher.publish(topic, homeUsage.data);
+            await publisher.publish(topic, homeUsage.data);
 
             // get energyAnalysis for solar production
             const solarProd = await loggedInApi.energyAnalysis(
-              { siteId: site.site_id, deviceSn: deviceSn, type: 'day', deviceType: 'solar_production' }
+              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "solar_production" },
             );
             topic = `${config.mqttTopic}/site/${site.site_name}/solarProduction`;
             await publisher.publish(topic, solarProd.data);
+
+            // get energyAnalysis for grid
+            const grid = await loggedInApi.energyAnalysis(
+              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "grid" },
+            );
+            topic = `${config.mqttTopic}/site/${site.site_name}/grid`;
+            await publisher.publish(topic, grid.data);
           }
         }
       }
