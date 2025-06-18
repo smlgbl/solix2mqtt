@@ -62,7 +62,7 @@ async function run(): Promise<void> {
             logger.log(`Found device ${deviceSn}`);
 
             // get energyAnalysis - possible known values "solar_production" | "solar_production_pv[1-4]" | "solarbank" | "home_usage" | "grid"
-            for (const d of ["home_usage", "solar_production"]) {
+            for (const d of ["home_usage", "solar_production", "solar_bank"]) {
               const energyAnalysis = await loggedInApi.energyAnalysis(
                 { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: d },
               );
