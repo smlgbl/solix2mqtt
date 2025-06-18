@@ -404,9 +404,10 @@ export class SolixApi {
     const headers = { ["X-Auth-Token"]: login.auth_token, "gtoken": this.md5(login.user_id) };
     const authFetch = async <T>(endpoint: string, data?: any): Promise<ResultResponse<T>> => {
       const response = await this.fetch(endpoint, data, headers);
-      const text = await response.json();
-      this.logger.log(`Response from ${endpoint}: ${JSON.stringify(text)}`);
-      return text as ResultResponse<T>;
+      //const text = await response.json();
+      //this.logger.log(`Response from ${endpoint}: ${JSON.stringify(text)}`);
+      //return text as ResultResponse<T>;
+      return await response.json() as ResultResponse<T>;
     };
     return {
       getRelateAndBindDevices: async () => {
