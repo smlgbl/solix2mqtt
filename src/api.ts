@@ -184,7 +184,8 @@ export interface Solarbank {
   wireless_type: `${number}`,
   main_version: `${number}`,
   photovoltaic_power: `${number}`,
-  output_power: `${number}`
+  output_power: `${number}`,
+  bat_charge_power: `${number}`,
 }
 
 export interface Device {
@@ -203,7 +204,7 @@ export interface ScenInfo {
     home_name: string,
     home_img: string,
     charging_power: `${number}`,
-    power_unit:string,
+    power_unit: string,
   },
   solar_list: any[],
   pps_info: {
@@ -228,12 +229,23 @@ export interface ScenInfo {
     total_battery_power: `${number}`,
     updated_time: string,
     total_photovoltaic_power: `${number}`,
-    total_output_power: `${number}`
+    total_output_power: `${number}`,
+    battery_discharge_power: `${number}`,
+    ac_power: `${number}`,
+    to_home_load: `${number}`,
+    solar_power_1: `${number}`,
+    solar_power_2: `${number}`,
+    solar_power_3: `${number}`,
+    solar_power_4: `${number}`,
+    grid_to_battery_power: `${number}`,
   },
   retain_load: string,
   updated_time: string,
+  home_load_power: `${number}`,
   grid_info: {
-    grid_list: Device[]
+    grid_list: Device[],
+    photovoltaic_to_grid_power: `${number}`,
+    grid_to_home_power: `${number}`,
   }
   power_site_type: number,
 }
@@ -257,7 +269,18 @@ export interface EnergyAnalysis {
     type: `${number}`,
     total: `${number}`,
     unit:string
-  }>
+  }>,
+  battery_discharging_total: `${number}`,
+  solar_to_grid_total: `${number}`,
+  grid_to_home_total: `${number}`,
+  ac_out_put_total: `${number}`,
+  home_usage_total: `${number}`,
+  solar_total: `${number}`,
+  battery_to_home_total: `${number}`,
+  grid_to_battery_total: `${number}`,
+  grid_imported_total: `${number}`,
+  solar_to_battery_total: `${number}`,
+  solar_to_home_total: `${number}`,
 }
 
 export interface LoadData {
@@ -381,7 +404,9 @@ export class SolixApi {
     const headers = { ["X-Auth-Token"]: login.auth_token, "gtoken": this.md5(login.user_id) };
     const authFetch = async <T>(endpoint: string, data?: any): Promise<ResultResponse<T>> => {
       const response = await this.fetch(endpoint, data, headers);
-      return await response.json() as ResultResponse<T>;
+      const text = await response.json();
+      this.logger.log(`Response from ${endpoint}: ${JSON.stringify(text)}`);
+      return text as ResultResponse<T>;
     };
     return {
       getRelateAndBindDevices: async () => {
