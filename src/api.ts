@@ -445,14 +445,14 @@ export class SolixApi {
         type = "day",
         startTime = new Date(),
         endTime = new Date(),
-        deviceType = "solar_production",
+        deviceType,
       }: {
         siteId: string, 
         deviceSn: string, 
         type: "day" | "week" | "year", 
         startTime?: Date, 
         endTime?: Date,
-        deviceType?: 'solar_production' | 'solar_production_pv[1-4]' | 'solarbank' | 'home_usage' | 'grid',
+        deviceType: string,
       }) => {
         const startTimeString = `${startTime.getFullYear()}-${this.pad(startTime.getMonth() + 1)}-${this.pad(startTime.getDate())}`;
         const endTimeString = endTime != null ? `${endTime.getFullYear()}-${this.pad(endTime.getMonth() + 1)}-${this.pad(endTime.getDate())}` : "";

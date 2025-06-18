@@ -61,26 +61,14 @@ async function run(): Promise<void> {
             const deviceSn = g.device_sn;
             logger.log(`Found device ${deviceSn}`);
 
-            // get energyAnalysis for home usage
-            const homeUsage = await loggedInApi.energyAnalysis(
-              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "home_usage" },
-            );
-            topic = `${config.mqttTopic}/site/${site.site_name}/homeUsage`;
-            await publisher.publish(topic, homeUsage.data);
-
-            // get energyAnalysis for solar production
-            const solarProd = await loggedInApi.energyAnalysis(
-              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "solar_production" },
-            );
-            topic = `${config.mqttTopic}/site/${site.site_name}/solarProduction`;
-            await publisher.publish(topic, solarProd.data);
-
-            // get energyAnalysis for grid
-            const grid = await loggedInApi.energyAnalysis(
-              { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: "grid" },
-            );
-            topic = `${config.mqttTopic}/site/${site.site_name}/grid`;
-            await publisher.publish(topic, grid.data);
+            // get energyAnalysis - possible known values "solar_production" | "solar_production_pv[1-4]" | "solarbank" | "home_usage" | "grid"
+            for (const d of ["home_usage", "solar_production"]) {
+              const energyAnalysis = await loggedInApi.energyAnalysis(
+                { siteId: site.site_id, deviceSn: deviceSn, type: "day", deviceType: d },
+              );
+              topic = `${config.mqttTopic}/site/${site.site_name}/${d}`;
+              await publisher.publish(topic, energyAnalysis.data);
+            }
           }
         }
       }
