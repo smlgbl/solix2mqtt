@@ -57,8 +57,8 @@ async function run(): Promise<void> {
         await publisher.publish(topic, scenInfo.data);
 
         if (scenInfo.data.grid_info != null) {
-          for (const g in scenInfo.data.grid_info.grid_list) {
-            const deviceSn = scenInfo.data.grid_info.grid_list[g].device_sn;
+          for (const g of scenInfo.data.grid_info.grid_list) {
+            const deviceSn = g.device_sn;
             logger.log(`Found device ${deviceSn}`);
 
             // get energyAnalysis for home usage
